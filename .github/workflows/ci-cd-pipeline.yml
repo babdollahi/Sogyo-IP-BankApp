@@ -7,28 +7,21 @@ on:
       - changePassword
 
 jobs:
-  # Test job
-  tests:
-    name: Unit tests
-    # Run on Ubuntu using the latest version
+  build-job:
+    name: Build
     runs-on: ubuntu-latest
-    # Job's steps
+
     steps:
-      # Check-out your repository under $GITHUB_WORKSPACE, so your workflow can access it
-      - uses: actions/checkout@v2
-      
-      # Set up JDK 17
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
           java-version: '17'
-      
-      # Run Gradle build
+
       - name: Run Gradle Build
         run: ./gradlew clean build --no-daemon
-
-
-
 
 
 #   unit-test-job:
