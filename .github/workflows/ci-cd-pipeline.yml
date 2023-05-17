@@ -1,5 +1,3 @@
-name: CI/CD Pipeline
-
 on:
   push:
     branches:
@@ -11,42 +9,59 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Build
-        run:  ./gradlew clean build
-
-  unit-test-job:
-    runs-on: ubuntu-latest
-    needs: build-job
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Unit Tests
-        run: |
-          echo "Running unit tests... This will take about 60 seconds."
-          sleep 1
-          echo "Code coverage is 90%"
-
-  lint-test-job:
-    runs-on: ubuntu-latest
-    needs: build-job
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Lint Tests
-        run: |
-          echo "Linting code... This will take about 10 seconds."
-          sleep 1
-          echo "No lint issues found."
-
-
-  deploy-job:
-    runs-on: ubuntu-latest
-    needs: [unit-test-job, lint-test-job]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Deploy to Azure
-        uses: azure/webapps-deploy@v2
+      - name: Setup JDK
+        uses: actions/setup-java@v2
         with:
-          app-name: bankappip
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          java-version: 11
+      - name: Download Gradle Wrapper
+        run: ./gradlew wrapper --gradle-version 7.1
+      - name: Build
+        run: ./gradlew clean build
+
+#   unit-test-job:
+#     runs-on: ubuntu-latest
+#     needs: build-job
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+#       - name: Setup JDK
+#         uses: actions/setup-java@v2
+#         with:
+#           java-version: 11
+#       - name: Unit Tests
+#         run: |
+#           echo "Running unit tests... This will take about 60 seconds."
+#           sleep 1
+#           echo "Code coverage is 90%"
+
+#   lint-test-job:
+#     runs-on: ubuntu-latest
+#     needs: build-job
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+#       - name: Setup JDK
+#         uses: actions/setup-java@v2
+#         with:
+#           java-version: 11
+#       - name: Lint Tests
+#         run: |
+#           echo "Linting code... This will take about 10 seconds."
+#           sleep 1
+#           echo "No lint issues found."
+
+#   deploy-job:
+#     runs-on: ubuntu-latest
+#     needs: [unit-test-job, lint-test-job]
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+#       - name: Setup JDK
+#         uses: actions/setup-java@v2
+#         with:
+#           java-version: 11
+#       - name: Deploy to Azure
+#         uses: azure/webapps-deploy@v2
+#         with:
+#           app-name: bankappip
+#           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
