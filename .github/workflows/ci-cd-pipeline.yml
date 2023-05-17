@@ -1,6 +1,9 @@
 name: CI/CD Pipeline
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build-job:
@@ -40,11 +43,11 @@ jobs:
   deploy-job:
     runs-on: ubuntu-latest
     needs: [unit-test-job, lint-test-job]
-    environment: production
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Deploy
-        run: |
-          echo "Deploying application..."
-          echo "Application successfully deployed."
+      - name: Deploy to Azure
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: bankappip
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
